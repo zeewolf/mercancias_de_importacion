@@ -1,4 +1,6 @@
 Mercancias::Application.routes.draw do
+  get "juicios/create"
+  get "products/index"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -54,8 +56,8 @@ Mercancias::Application.routes.draw do
   #     resources :products
   #   end
 
-  namespace :api do
-    resources :products do
+  namespace :api, defaults: {format: :json} do
+    resources :products, only: [:index] do
       resources :juicios
     end
   end

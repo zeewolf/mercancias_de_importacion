@@ -10,6 +10,7 @@ class CreateJuicios < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_foreign_key :juicios, :products, :name => 'juicios belong to product'
+    add_foreign_key :juicios, :products, :name => 'juicios_belong_to_product'
+    add_index :juicios, :created_at
   end
 end

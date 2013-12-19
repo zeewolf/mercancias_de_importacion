@@ -5,5 +5,5 @@ class Juicio < ActiveRecord::Base
 
   validates :name, presence: true, with: /[a-zA-Z]/
   validates :email, with: EMAIL_REGEXP
-  validates :text, presence: true
+  validates :content, presence: true
 end
