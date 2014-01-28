@@ -1,2 +1,49 @@
 <h1>Products#index</h1>
-<p>Find me in app/views/products/index.html.erb</p>
+
+<div ng-controller='ProductsController'>
+  <% @products.each do |product| %>
+      <p><%= product.title %> <%= product.inet_price %> <s><%= product.price %></s> </p>
+  <% end %>
+
+  <ul infinite-scroll='products.nextPage()' infinite-scroll-disabled='products.busy' infinite-scroll-distance='1'>
+    <li ng-repeat='item in products.items'>
+      <span class='price'>{{item.price}}</span>
+      <span class='image'>{{item.image.url}}</span>
+      <span class='title'>
+        <a ng-href='/products/{{item.id}}' target='_blank'>{{item.title}}</a>
+      </span>
+    </li>
+    <div ng-show='products.busy'>Loading data...</div>
+  </ul>
+</div>
+<script type="text/javascript">
+    var myApp = angular.module('prod_import', ['infinite-scroll']);
+
+    myApp.controller('ProductsController', function($scope, Products) {
+        $scope.products = new Products();
+    });
+
+    myApp.factory('Products', function($http) {
+        var Products = function() {
+            this.items = [];
+            this.busy = false;
+            this.page = 1;
+        };
+
+        Products.prototype.nextPage = function() {
+            if (this.busy) return;
+            this.busy = true;
+
+            var url = "/products?page=" + this.page;
+            $http.get(url).success(function(data) {
+            for (var i = 0; i < data.length; i++) {
+                this.items.push(data[i]);
+            }
+            this.page = this.page + 1;;
+            this.busy = false;
+            }.bind(this));
+        };
+
+        return Products;
+    });
+</script>
