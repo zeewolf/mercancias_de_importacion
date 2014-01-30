@@ -1,0 +1,54 @@
+%h1 Products#index
+%div{"ng-controller" => "ProductsController"}
+  %ul{"infinite-scroll" => "products.nextPage()", "infinite-scroll-disabled" => "products.busy", "infinite-scroll-distance" => "1"}
+  - @products.each do |product|
+    %li
+      %span.price
+        #{product.inet_price}
+        %s #{product.price}
+      %span.image
+        %img{:src => product.image.url(:small)}
+      %span.title
+        %a{"ng-href" => "/products/", target: "_blank"} #{product.title}
+  %li{"ng-repeat" => "item in products.items"}
+    %span.price
+      {{item.inet_price}}
+      %s
+        {{item.price}}
+    %a{"ng-href" => "/products/{{item.id}}"}
+      %span.image
+        %img{'ng-src' => '{{item.image_url}}'}
+    %span.title
+      %a{"ng-href" => "/products/{{item.id}}"}
+        {{item.title}}
+  %div{"ng-show" => "products.busy"} Loading data...
+:javascript
+  var myApp = angular.module('prod_import', ['infinite-scroll']);
+
+  myApp.controller('ProductsController', function($scope, Products) {
+      $scope.products = new Products();
+  });
+
+  myApp.factory('Products', function($http) {
+      var Products = function() {
+          this.items = [];
+          this.busy = false;
+          this.page = 2;
+      };
+
+      Products.prototype.nextPage = function() {
+          if (this.busy) return;
+          this.busy = true;
+
+          var url = "/products?page=" + this.page;
+          $http.get(url).success(function(data) {
+            for (var i = 0; i < data.length; i++) {
+                this.items.push(data[i]);
+            }
+            this.page = this.page + 1;;
+            this.busy = false;
+          }.bind(this));
+      };
+
+      return Products;
+  });

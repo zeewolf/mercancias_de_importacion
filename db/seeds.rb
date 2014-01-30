@@ -11,6 +11,7 @@ doc.xpath('//products/product').each do |attrs_list|
   name_2_val = {}
   attrs_list.each{|prod_attr| name_2_val[prod_attr.first.to_sym] = prod_attr.second }
 
-  product = Product.create(name_2_val)
+  product = Product.new(name_2_val)
   product.image = open(name_2_val[:image]) if name_2_val[:image].present?
+  product.save
 end
