@@ -1,0 +1,49 @@
+.product
+  %span.image= @product.image.url
+  %span.title= @product.title
+  %span.price
+    = @product.inet_price
+    %s= @product.price
+.comments{"ng-controller" => "CommentController"}
+  %form.css-form{name: "commentform"}
+    %label Username:
+    %input{name: "username", "ng-model" => "newcomment.name", type: "text"}/
+    %span{"ng-show" => "commentform.username.$error.required"} Tell us your name.
+    %br/
+    %label E-mail:
+    %input{name: "useremail", "ng-model" => "newcomment.email", type: "email"}/
+    %div{"ng-show" => "commentform.useremail.$dirty  commentform.useremail.$invalid"}
+      Invalid:
+      %span{"ng-show" => "commentform.useremail.$error.required"} Tell us your email.
+      %span{"ng-show" => "commentform.useremail.$error.email"} This is not a valid email.
+    %br/
+    %label Content:
+    %textarea{name: "content", "ng-model" => "newcomment.content"}
+    %span{"ng-show" => "commentform.content.$error.required"} Please, add some comment.
+    %button{"ng-click" => "addComment()", "ng-disabled" => "commentform.$invalid"} Add
+  %ul
+    %li{"ng-repeat" => "comment in comments"}
+      %span.email {{comment.email}}
+      %span.name {{comment.name}}
+      %p.content {{comment.content}}
+        
+:javascript
+  var myApp = angular.module('prod_import', ['infinite-scroll', 'ngResource']);
+
+  myApp.config([
+      "$httpProvider", function($httpProvider) {
+          $httpProvider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content');
+      }
+  ]);
+
+  myApp.factory('Comments', function($resource){
+      return $resource('/products/#{@product.id}/comments/:commentId.json', {}, {});
+  })
+  .controller('CommentController', function($scope, Comments) {
+      $scope.comments = Comments.query();
+      $scope.addComment = function() {
+          $scope.comments.push(angular.copy($scope.newcomment));
+          Comments.save($scope.newcomment);
+          $scope.newcomment  = {};
+      }
+  });
