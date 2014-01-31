@@ -1,27 +1,33 @@
-%h1 Products#index
+%h1= t("controller.products.index.h1")
 %div{"ng-controller" => "ProductsController"}
-  %ul{"infinite-scroll" => "products.nextPage()", "infinite-scroll-disabled" => "products.busy", "infinite-scroll-distance" => "1"}
-  - @products.each do |product|
-    %li
-      %span.price
-        #{product.inet_price}
-        %s #{product.price}
-      %span.image
-        %img{:src => product.image.url(:small)}
+  %ul.media-list{"infinite-scroll" => "products.nextPage()", "infinite-scroll-disabled" => "products.busy", "infinite-scroll-distance" => "1"}
+    - @products.each do |product|
+      %li.media
+        %span.price
+          #{t("controllers.products.index.price")}:
+          - if product.inet_price.present?
+            #{product.inet_price}
+            %s= product.price
+          - else
+            #{product.price}
+        %a.pull-left{:href => product_url(product)}
+          %img.media-object{:src => product.image.url(:small), :alt => product.title}
+        %span.title
+          %a{:href => products_url(product)} #{product.title}
+
+    %li.media{"ng-repeat" => "item in products.items"}
+      %span.price{"ng-if" => "item.inet_price.length !== 0"}
+        #{t("controllers.products.index.price")}:: {{item.inet_price}}
+        %s
+          {{item.price}}
+      %span.price{"ng-if" => "item.inet_price.length === 0"}
+        #{t("controllers.products.index.price")}:: {{item.price}}
+      %a.pull-left{"ng-href" => "/products/{{item.id}}"}
+        %img.media-object{'ng-src' => '{{item.image_url}}', :alt => '{{item.title}}'}
       %span.title
-        %a{"ng-href" => "/products/", target: "_blank"} #{product.title}
-  %li{"ng-repeat" => "item in products.items"}
-    %span.price
-      {{item.inet_price}}
-      %s
-        {{item.price}}
-    %a{"ng-href" => "/products/{{item.id}}"}
-      %span.image
-        %img{'ng-src' => '{{item.image_url}}'}
-    %span.title
-      %a{"ng-href" => "/products/{{item.id}}"}
-        {{item.title}}
-  %div{"ng-show" => "products.busy"} Loading data...
+        %a{"ng-href" => "/products/{{item.id}}"}
+          {{item.title}}
+    %div{"ng-show" => "products.busy"} #{t("controllers.products.index.loading_text")}:
 :javascript
   var myApp = angular.module('prod_import', ['infinite-scroll']);
 

@@ -1,0 +1,22 @@
+ru:
+  controllers:
+    products:
+      index:
+        h1: "Импортированные товары"
+        price: "Цена"
+        loading_text: "загружается..."
+      show:
+        name: "Имя"
+        email: "E-mail"
+        content: "Комментарий"
+        invalid: "Ошибки"
+        price: "Цена"
+        comments: "Комментарии"
+        add_comment: "Добавить комментарий"
+        add_button: "Добавить"
+        errors:
+          tell_us_your_name: "Пожалуйста, укажите имя"
+          tell_us_your_email: "Пожалуйста, укажите адрес E-mail"
+          add_some_comment: "Пожалуйста, введите текст комментария"
+          email_not_valid: "Неправильный формат адреса E-mail "
+
